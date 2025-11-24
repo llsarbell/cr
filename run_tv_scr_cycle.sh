@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Все пути теперь относительны или прямые
-PROJECT_DIR="/Users/gorkme/Pictures/Puppeteer"
+PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 GIT_REPO_DIR="$PROJECT_DIR/screenshots"
 
 echo "🚀 Запуск цикла обновления TradingView"
