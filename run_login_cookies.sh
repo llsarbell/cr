@@ -1,3 +1,3 @@
 #!/bin/bash
-# Просто запускаем скрипт без параметров
-node /Users/gorkme/Pictures/Puppeteer/login_cookies.mjs
+cd "$(dirname "$0")"
+node login_cookies.mjs
