@@ -13,8 +13,8 @@ git stash
 git pull --rebase origin main
 git stash pop 2>/dev/null
 
-# 3. Удаляем старый файл (если он еще есть)
-rm -f screenshots/tw_cf_01_1d_div_all_rsi.png
+# 3. Удаляем старые файлы (предыдущий неправильный нейминг)
+rm -f screenshots/06_*.png
 
 # 4. Запуск Puppeteer
 echo ""
@@ -30,12 +30,12 @@ fi
 echo ""
 echo "📤 Загрузка в GitHub..."
 
-# Добавляем новые файлы и удаление старого
+# Добавляем новые файлы (они теперь начинаются так же 06_tv_cf_..., так что маска 06_* сработает)
+# Но чтобы Git понял, что мы удалили старые имена и создали новые, нужно сделать add . или add -u
 git add screenshots/06_*.png
-git add screenshots/tw_cf_01_1d_div_all_rsi.png 2>/dev/null
 
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-git commit -m "Update TV charts - $TIMESTAMP"
+git commit -m "Update TV charts (rename) - $TIMESTAMP"
 
 git push origin main
 
