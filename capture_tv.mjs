@@ -1,75 +1,92 @@
 import puppeteer from 'puppeteer';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { mkdirSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Сохраняем сразу в папку репозитория
+// Папки
+const USER_DATA_DIR = join(__dirname, 'chrome-profile');
 const OUTPUT_DIR = join(__dirname, 'screenshots');
 
-const chartConfig = {
-  url: 'https://www.tradingview.com/chart/Q1AQBZrq/',
-  filename: 'tw_cf_01_1d_div_all_rsi.png',
-  panelSelector: '.layout__area--center'
-};
+// Создаем папку если нет
+try { mkdirSync(OUTPUT_DIR, { recursive: true }); } catch (err) {}
+
+// === ТВОЙ СПИСОК ГРАФИКОВ ===
+const CHARTS_CONFIG = [
+    { filename: '06_01_tv_cf_1d_trend_rsi.png', url: 'https://www.tradingview.com/chart/Q1AQBZrq/' },
+    { filename: '06_02_tv_cf_1d_div_all.png', url: 'https://www.tradingview.com/chart/DeeS34sy/' },
+    { filename: '06_03_tv_cf_1d_vix_bb.png', url: 'https://www.tradingview.com/chart/FKGbmWE4/' },
+    { filename: '06_04_tv_cf_1d_vix_atr.png', url: 'https://www.tradingview.com/chart/3xV75vBD/' },
+    { filename: '06_05_tv_cf_1d_vix_rsi.png', url: 'https://www.tradingview.com/chart/ytxm5gs9/' },
+    { filename: '06_06_tv_cf_1d_stoch_rsi.png', url: 'https://www.tradingview.com/chart/cG9MGbO9/' },
+    { filename: '06_07_tv_cf_1d_rsi_alma.png', url: 'https://www.tradingview.com/chart/KMnL6TUq/' },
+    { filename: '06_08_tv_cf_1d_deviation.png', url: 'https://www.tradingview.com/chart/PUHCVJ0v/' },
+    { filename: '06_09_tv_cf_1d_pd200.png', url: 'https://www.tradingview.com/chart/jfA8pIDD/' },
+    { filename: '06_10_tv_cf_1d_devo.png', url: 'https://www.tradingview.com/chart/ZfqQJxQa/' },
+    { filename: '06_11_tv_cf_1d_bol_top_bot.png', url: 'https://www.tradingview.com/chart/g0hiXx49/' },
+    { filename: '06_12_tv_cf_1d_bb_trend_ma.png', url: 'https://www.tradingview.com/chart/k6SvW2my/' },
+    { filename: '06_13_tv_cf_1d_atr_top_bot.png', url: 'https://www.tradingview.com/chart/PBZOOFl1/' },
+    { filename: '06_14_tv_cf_1d_atr_peak.png', url: 'https://www.tradingview.com/chart/ag7V09GT/' },
+    { filename: '06_15_tv_cf_1d_angle_7.png', url: 'https://www.tradingview.com/chart/bMXvYCVF/' },
+    { filename: '06_16_tv_cf_1d_alma_lvl.png', url: 'https://www.tradingview.com/chart/XV0L73xp/' },
+    { filename: '06_17_tv_cf_1d_ago.png', url: 'https://www.tradingview.com/chart/jsmvbxBi/' },
+    { filename: '06_18_tv_cf_1d_adiv.png', url: 'https://www.tradingview.com/chart/nXNIFZcY/' },
+    { filename: '06_19_tv_cf_1d_5ma_heatmap.png', url: 'https://www.tradingview.com/chart/l5FfuBfr/' },
+    { filename: '06_20_tv_cf_1d_fear_greed.png', url: 'https://www.tradingview.com/chart/0X2q2DVL/' }
+];
 
 const delay = ms => new Promise(r => setTimeout(r, ms));
 
 (async () => {
-  const browser = await puppeteer.launch({
-    headless: 'new', // ВКЛЮЧЕН ФОНОВЫЙ РЕЖИМ
-    userDataDir: join(__dirname, 'chrome-profile'),
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--window-size=1200,1200',
-      // Маскировка под обычного пользователя
-      '--disable-blink-features=AutomationControlled',
-      '--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-    ],
-    ignoreDefaultArgs: ['--enable-automation']
-  });
-  const page = await browser.newPage();
-  await page.setViewport({ width: 1200, height: 1200, deviceScaleFactor: 1 });
-
-  console.log(`Открываем ${chartConfig.url}...`);
-  await page.goto(chartConfig.url, { waitUntil: 'networkidle2', timeout: 90000 });
-
-  // Скрытие лишнего UI
-  await page.evaluate(() => {
-    const header = document.querySelector('header');
-    if (header) header.style.display = 'none';
-    ['.layout__area--left', '.layout__area--right', '.layout__area--bottom'].forEach(sel => {
-      const el = document.querySelector(sel); if(el) el.style.display = 'none';
+    console.log(`🚀 Начинаем обработку ${CHARTS_CONFIG.length} графиков TradingView...`);
+    
+    const browser = await puppeteer.launch({
+        headless: "new",
+        userDataDir: USER_DATA_DIR,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--window-size=1200,1200',
+            '--disable-blink-features=AutomationControlled'
+        ],
+        ignoreDefaultArgs: ['--enable-automation']
     });
-    const watermarks = document.querySelectorAll('[data-name="watermark"]');
-    watermarks.forEach(el => el.style.display = 'none');
-  });
-  
-  await delay(2000);
-  await page.waitForSelector(chartConfig.panelSelector, { timeout: 20000 });
 
-  // Скрытие перекрестия
-  const tvLogoSelector = '.tv-control-logo';
-  const logoSelector = 'a[href="/"] svg';
-  try {
-    if (await page.$(tvLogoSelector)) await page.hover(tvLogoSelector);
-    else if (await page.$(logoSelector)) await page.hover(logoSelector);
-    else await page.mouse.move(20, 1000);
-  } catch (e) {
-    await page.mouse.move(20, 1000);
-  }
-  await delay(800);
+    const page = await browser.newPage();
+    // Ставим масштаб х2 для четкости (retina) и размер 1200
+    await page.setViewport({ width: 1200, height: 1200, deviceScaleFactor: 2 });
 
-  const panelElement = await page.$(chartConfig.panelSelector);
-  if (panelElement) {
-    const filepath = join(OUTPUT_DIR, chartConfig.filename);
-    await panelElement.screenshot({ path: filepath, type: 'png', omitBackground: false });
-    console.log(`✓ Сохранено: ${chartConfig.filename}`);
-  } else {
-    console.warn('❌ Панель не найдена!');
-  }
+    let count = 0;
 
-  await browser.close();
+    for (const chart of CHARTS_CONFIG) {
+        try {
+            console.log(`\n[${++count}/${CHARTS_CONFIG.length}] Открываем: ${chart.filename}`);
+            
+            await page.goto(chart.url, { waitUntil: 'networkidle2', timeout: 60000 });
+            
+            // Ждем прогрузки индикаторов (TV иногда тупит)
+            await delay(5000); 
+
+            // Удаляем всплывающие плашки, если есть, и пытаемся найти график
+            // Обычно график лежит в .layout__area--center
+            const element = await page.$('.layout__area--center');
+
+            if (element) {
+                await element.screenshot({ path: join(OUTPUT_DIR, chart.filename) });
+                console.log(`   ✓ Сохранено`);
+            } else {
+                // Если не нашли центр, снимаем весь экран
+                await page.screenshot({ path: join(OUTPUT_DIR, chart.filename) });
+                console.log(`   ⚠️ Сохранено (Full Page) - селектор не найден`);
+            }
+
+        } catch (e) {
+            console.error(`   ❌ Ошибка: ${e.message}`);
+        }
+    }
+
+    console.log(`\n🏁 Готово!`);
+    await browser.close();
 })();

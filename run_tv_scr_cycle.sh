@@ -1,33 +1,24 @@
 #!/bin/bash
 
-# Все пути теперь относительны или прямые
-PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
-GIT_REPO_DIR="$PROJECT_DIR/screenshots"
-
 echo "🚀 Запуск цикла обновления TradingView"
 echo "============================================"
 
-# Переходим в папку проекта
-cd "$PROJECT_DIR" || exit
+# 1. Переходим в папку скрипта
+cd "$(dirname "$0")" || exit
 
-# --- ЭТАП 1: СИНХРОНИЗАЦИЯ ---
+# 2. Синхронизация
 echo ""
 echo "🔄 Предварительная синхронизация..."
-if [ -d "$GIT_REPO_DIR" ]; then
-  cd "$GIT_REPO_DIR" || exit
-  git stash
-  git pull --rebase origin main
-  git stash pop 2>/dev/null
-  cd "$PROJECT_DIR" # Возвращаемся обратно
-else
-  echo "❌ Ошибка: папка screenshots не найдена!"
-  exit 1
-fi
+git stash
+git pull --rebase origin main
+git stash pop 2>/dev/null
 
-# --- ЭТАП 2: ГЕНЕРАЦИЯ ---
+# 3. Удаляем старый файл (если он еще есть)
+rm -f screenshots/tw_cf_01_1d_div_all_rsi.png
+
+# 4. Запуск Puppeteer
 echo ""
 echo "📸 Запуск Puppeteer (TV)..."
-# Запускаем переименованный JS файл
 node capture_tv.mjs
 
 if [ $? -ne 0 ]; then
@@ -35,29 +26,18 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# --- ЭТАП 3: ОТПРАВКА ---
+# 5. Отправка в Git
 echo ""
 echo "📤 Загрузка в GitHub..."
-cd "$GIT_REPO_DIR" || exit
 
-# Добавляем (обновляем) файл
-git add tw_cf_01_1d_div_all_rsi.png
+# Добавляем новые файлы и удаление старого
+git add screenshots/06_*.png
+git add screenshots/tw_cf_01_1d_div_all_rsi.png 2>/dev/null
 
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-if git commit -m "Update TV chart - $TIMESTAMP" --quiet; then
-  
-  git pull --rebase origin main
-  
-  if git push origin main; then
-    echo ""
-    echo "✅ TV-скриншот обновлен!"
-  else
-    echo "⚠️ Ошибка git push"
-  fi
-else
-  echo "ℹ️ Картинка не изменилась"
-fi
+git commit -m "Update TV charts - $TIMESTAMP"
 
-echo "🔗 https://github.com/llsarbell/screenshots"
+git push origin main
+
 echo ""
-echo "✅ ГОТОВО"
+echo "✅ TV-скриншоты обновлены!"
