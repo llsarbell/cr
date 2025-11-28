@@ -10,7 +10,7 @@ const USER_DATA_DIR = join(__dirname, 'chrome-profile');
 const OUTPUT_DIR = join(__dirname, 'screenshots');
 const BASE_URL = 'https://crypto-family.com';
 
-// --- НОВАЯ КОНФИГУРАЦИЯ ИМЕН (05_cf_...) ---
+// --- СПИСОК ГРАФИКОВ ---
 const CHARTS_CONFIG = [
     { name: 'BTC Magma Signals', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(2) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: [{ tf: '4h', file: '05_cf_01_4h_magma.png' }, { tf: '1d', file: '05_cf_02_1d_magma.png' }, { tf: '1w', file: '05_cf_03_1w_magma.png' }] },
     { name: 'BTC BB Signals', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(3) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: [{ tf: '4h', file: '05_cf_04_4h_bb.png' }, { tf: '1d', file: '05_cf_05_1d_bb.png' }] },
@@ -42,33 +42,48 @@ async function findPanelByCanvas(page, canvasSelector) {
 }
 
 async function captureCharts() {
-    const browser = await puppeteer.launch({ headless: "new", userDataDir: USER_DATA_DIR, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const browser = await puppeteer.launch({
+        headless: "new",
+        userDataDir: USER_DATA_DIR,
+        args: [
+            '--no-sandbox', 
+            '--disable-setuid-sandbox',
+            '--window-size=1280,1280',
+            '--disable-blink-features=AutomationControlled'
+        ]
+    });
+
     const page = await browser.newPage();
-    await page.setViewport({ width: 1024, height: 1024, deviceScaleFactor: 2 });
+    await page.setViewport({ width: 1280, height: 1280, deviceScaleFactor: 2 });
     try { mkdirSync(OUTPUT_DIR, { recursive: true }); } catch (err) {}
 
     console.log('Открываем главную страницу...');
-    await page.goto(BASE_URL, { waitUntil: 'networkidle2', timeout: 60000 });
-    await delay(5000);
+    await page.goto(BASE_URL, { waitUntil: 'networkidle0', timeout: 90000 });
+    await delay(7000); 
 
     let totalScreenshots = 0;
     for (const config of CHARTS_CONFIG) {
         console.log(`\n=== Обработка: ${config.name} ===`);
-        const panel = await findPanelByCanvas(page, config.canvasSelector);
-        if (!panel) { console.warn(`⚠️ Панель не найдена`); continue; }
         
         try {
             const canvas = await page.$(config.canvasSelector);
-            if (canvas) await canvas.evaluate(el => el.scrollIntoView({ behavior: 'smooth', block: 'center' }));
-            await delay(1000);
+            if (canvas) {
+                await canvas.evaluate(el => el.scrollIntoView({ behavior: 'instant', block: 'center' }));
+                await delay(3000); // ПАУЗА 3 СЕК ПОСЛЕ СКРОЛЛА (Убирает прозрачность)
+            }
         } catch (e) {}
+
+        const panel = await findPanelByCanvas(page, config.canvasSelector);
+        if (!panel) { console.warn(`⚠️ Панель не найдена`); continue; }
 
         if (config.hasRiskSelector) {
             for (const risk of config.riskTypes) {
                 try {
                     const selectElement = await panel.$('#rangeTypeSelect');
                     if (selectElement) await selectElement.select(risk.type);
-                    await delay(2500);
+                    
+                    await delay(4000); // ПАУЗА 4 СЕК ПОСЛЕ ВЫБОРА РИСКА
+                    
                     const canvas = await page.$(config.canvasSelector);
                     if (canvas) {
                         await canvas.screenshot({ path: join(OUTPUT_DIR, risk.file) });
@@ -87,7 +102,9 @@ async function captureCharts() {
 
                     if (tfButton.asElement()) {
                         await tfButton.asElement().click();
-                        await delay(2500);
+                        
+                        await delay(4000); // ПАУЗА 4 СЕК ПОСЛЕ ПЕРЕКЛЮЧЕНИЯ ТАЙМФРЕЙМА
+                        
                         const canvas = await page.$(config.canvasSelector);
                         if (canvas) {
                             await canvas.screenshot({ path: join(OUTPUT_DIR, item.file) });
@@ -104,3 +121,4 @@ async function captureCharts() {
 }
 
 captureCharts().catch(console.error);
+
