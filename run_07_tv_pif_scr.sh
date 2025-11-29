@@ -35,5 +35,4 @@ TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 git commit -m "07_tv_pif_upd - $TIMESTAMP"
 git push origin main
 
-echo "✅ TV PIF обновлены принудительно!"
-
+echo "✅ TV PIF обновлены"

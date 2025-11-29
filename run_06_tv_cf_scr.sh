@@ -1,43 +1,36 @@
 #!/bin/bash
 
-echo "🚀 Запуск цикла обновления TradingView"
-echo "============================================"
-
-# 1. Переходим в папку скрипта
 cd "$(dirname "$0")" || exit
 
-# 2. Синхронизация
-echo ""
-echo "🔄 Предварительная синхронизация..."
+echo "🔄 (TV CF) Синхронизация..."
 git stash
 git pull --rebase origin main
 git stash pop 2>/dev/null
 
-# 3. Удаляем старые файлы (предыдущий неправильный нейминг)
-rm -f screenshots/06_*.png
+# 1. УДАЛЕНИЕ
+echo "🗑️ Удаление старых TV CF с сервера..."
+rm -f screenshots/06_tv_cf_*.png
+git add -u screenshots/
+if ! git diff --cached --quiet; then
+    git commit -m "Delete TV CF charts before update"
+    git push origin main
+fi
 
-# 4. Запуск Puppeteer
-echo ""
-echo "📸 Запуск Puppeteer (TV)..."
+# 2. ГЕНЕРАЦИЯ
+echo "📸 (TV CF) Генерация..."
 node capture_tv.mjs
 
 if [ $? -ne 0 ]; then
-    echo "❌ Ошибка в JS скрипте"
+    echo "❌ Ошибка в JS скрипте (TV)"
     exit 1
 fi
 
-# 5. Отправка в Git
-echo ""
-echo "📤 Загрузка в GitHub..."
-
-# Добавляем новые файлы (они теперь начинаются так же 06_tv_cf_..., так что маска 06_* сработает)
-# Но чтобы Git понял, что мы удалили старые имена и создали новые, нужно сделать add . или add -u
-git add screenshots/06_*.png
+# 3. ЗАЛИВКА
+echo "📤 (TV CF) Заливка..."
+git add screenshots/06_tv_cf_*.png
 
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-git commit -m "Update TV charts (rename) - $TIMESTAMP"
-
+git commit -m "06_tv_cf_upd - $TIMESTAMP"
 git push origin main
 
-echo ""
-echo "✅ TV-скриншоты обновлены!"
+echo "✅ TV CF обновлены"
