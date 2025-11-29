@@ -1,37 +1,39 @@
 #!/bin/bash
 
-echo "🚀 Запуск цикла PIF Strategy"
-echo "============================================"
-
 cd "$(dirname "$0")" || exit
 
-# Синхронизация
-echo ""
-echo "🔄 Синхронизация..."
+echo "🔄 (TV PIF) Синхронизация..."
 git stash
 git pull --rebase origin main
 git stash pop 2>/dev/null
 
-# Запуск
-echo ""
-echo "📸 Запуск Puppeteer (PIF)..."
-node capture_tv_pif.mjs
+# 1. УДАЛЕНИЕ
+echo "🗑️ Удаление старых TV PIF с сервера..."
+rm -f screenshots/07_tv_pif_*.png
+git add -u screenshots/
+if ! git diff --cached --quiet; then
+    git commit -m "Delete TV PIF charts before update"
+    git push origin main
+fi
+
+# 2. ГЕНЕРАЦИЯ
+echo "📸 (TV PIF) Генерация..."
+# Внимание: запускаем скрипт генерации. 
+# Если у тебя вся логика (и CF, и PIF) внутри capture_tv.mjs, то запускаем его.
+node capture_tv.mjs
 
 if [ $? -ne 0 ]; then
-    echo "❌ Ошибка в JS скрипте"
+    echo "❌ Ошибка в JS скрипте (PIF)"
     exit 1
 fi
 
-# Отправка
-echo ""
-echo "📤 Загрузка в GitHub..."
-
-# Добавляем ТОЛЬКО файлы этой стратегии
+# 3. ЗАЛИВКА
+echo "📤 (TV PIF) Заливка..."
 git add screenshots/07_tv_pif_*.png
 
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-git commit -m "Update PIF Strategy charts - $TIMESTAMP"
+git commit -m "07_tv_pif_upd - $TIMESTAMP"
 git push origin main
 
-echo ""
-echo "✅ PIF-скриншоты обновлены!"
+echo "✅ TV PIF обновлены принудительно!"
+
