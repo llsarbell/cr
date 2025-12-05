@@ -9,7 +9,7 @@ const __dirname = dirname(__filename);
 const USER_DATA_DIR = join(__dirname, 'chrome-profile');
 
 (async () => {
-  console.log(`🚀 Запуск Chrome с профилем Puppeteer...`);
+  console.log('🚀 Запуск Chrome с профилем Puppeteer...');
   console.log(`📂 Профиль: ${USER_DATA_DIR}`);
 
   const browser = await puppeteer.launch({
@@ -27,8 +27,15 @@ const USER_DATA_DIR = join(__dirname, 'chrome-profile');
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 1024 });
   
-  // Просто открываем Google или пустую страницу, дальше ты сам
-  await page.goto('https://google.com', { waitUntil: 'networkidle2' });
+  // Открываем Google с обработкой ошибок
+  try {
+    await page.goto('https://google.com', { 
+      waitUntil: 'domcontentloaded',
+      timeout: 30000 
+    });
+  } catch (err) {
+    console.log('⚠️ Навигация прервана, но браузер открыт. Продолжаем...');
+  }
 
   console.log('✅ Браузер открыт. Введи адрес сайта сам и логинься.');
   console.log('⏳ Жду 10 минут...');
@@ -36,4 +43,5 @@ const USER_DATA_DIR = join(__dirname, 'chrome-profile');
   await new Promise(r => setTimeout(r, 600000));
 
   await browser.close();
+  console.log('👋 Браузер закрыт, профиль сохранён.');
 })();
