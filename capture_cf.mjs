@@ -2,7 +2,6 @@ import puppeteer from 'puppeteer';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { mkdirSync } from 'fs';
-import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -32,7 +31,7 @@ const CHARTS_CONFIG = [
   { name: 'BTC OI / 24h Volume', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(14) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'oi_vol' }
 ];
 
-// карта красивых имён файлов
+// Карта имён файлов (05_cf_XX_...)
 const FILE_NAME_MAP = {
   magma_4h: '05_cf_01_4h_magma.png',
   magma_1d: '05_cf_02_1d_magma.png',
@@ -98,18 +97,6 @@ async function findPanelByCanvas(page, canvasSelector) {
   }
 }
 
-async function runGitCommands() {
-  try {
-    execSync('git add ./*.png', { cwd: OUTPUT_DIR });
-    const commitMsg = `Update CF screenshots - ${new Date().toISOString()}`;
-    execSync(`git commit -m "${commitMsg}"`, { cwd: OUTPUT_DIR });
-    execSync('git push origin main', { cwd: OUTPUT_DIR });
-    console.log('✅ Скриншоты успешно выгружены в Git!');
-  } catch (error) {
-    console.error('❌ Ошибка при git push:', error.message);
-  }
-}
-
 async function captureCharts() {
   const browser = await puppeteer.launch({
     headless: true,
@@ -160,7 +147,11 @@ async function captureCharts() {
           const canvas = await page.$(config.canvasSelector);
           if (canvas) {
             const key = `${config.prefix}_${riskLabel}`;
-            const filename = FILE_NAME_MAP[key] || `cf_${config.prefix}_1d_${riskLabel}.png`;
+            const filename = FILE_NAME_MAP[key];
+            if (!filename) {
+              console.error(`❌ Нет маппинга для ключа: ${key}`);
+              continue;
+            }
             await canvas.screenshot({ path: join(OUTPUT_DIR, filename) });
             console.log(` ✓ Сохранено: ${filename}`);
             totalScreenshots++;
@@ -217,7 +208,11 @@ async function captureCharts() {
         }
 
         const key = `${config.prefix}_${tf}`;
-        const filename = FILE_NAME_MAP[key] || `cf_${config.prefix}_${tf}.png`;
+        const filename = FILE_NAME_MAP[key];
+        if (!filename) {
+          console.error(`❌ Нет маппинга для ключа: ${key}`);
+          continue;
+        }
         await canvas.screenshot({ path: join(OUTPUT_DIR, filename) });
         console.log(` ✓ Сохранено: ${filename}`);
         totalScreenshots++;
@@ -229,7 +224,6 @@ async function captureCharts() {
 
   console.log(`\n✅ Все скриншоты готовы! Всего сохранено: ${totalScreenshots}`);
   await browser.close();
-  await runGitCommands();
 }
 
 captureCharts().catch(console.error);
