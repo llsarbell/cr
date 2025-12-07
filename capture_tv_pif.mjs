@@ -13,9 +13,10 @@ const OUTPUT_DIR = join(__dirname, 'screenshots');
 try { mkdirSync(OUTPUT_DIR, { recursive: true }); } catch (err) {}
 
 // === НОВАЯ СТРАТЕГИЯ PIF ===
+// delay: индивидуальный таймаут для тяжёлых графиков (по умолчанию 3000)
 const CHARTS_CONFIG = [
     { filename: '07_tv_pif_01_1d_div.png', url: 'https://www.tradingview.com/chart/IVWjCSts/' },
-    { filename: '07_tv_pif_02_12h_hero.png', url: 'https://www.tradingview.com/chart/q1O0b9l5/' },
+    { filename: '07_tv_pif_02_12h_hero.png', url: 'https://www.tradingview.com/chart/q1O0b9l5/', delay: 5000 },
     { filename: '07_tv_pif_03_1d_big_guy.png', url: 'https://www.tradingview.com/chart/7iMfXXlW/' },
     { filename: '07_tv_pif_04_1d_hist_r_s_m.png', url: 'https://www.tradingview.com/chart/z9k0uaIB/' },
     { filename: '07_tv_pif_05_1d_trader_01.png', url: 'https://www.tradingview.com/chart/38d1vWEf/' },
@@ -23,7 +24,7 @@ const CHARTS_CONFIG = [
     { filename: '07_tv_pif_07_1d_inside.png', url: 'https://www.tradingview.com/chart/61THKnE7/' },
     { filename: '07_tv_pif_08_1d_bottom_line.png', url: 'https://www.tradingview.com/chart/qoNAuueL/' },
     { filename: '07_tv_pif_09_1d_safety_trade.png', url: 'https://www.tradingview.com/chart/9pQ7IPF9/' },
-    { filename: '07_tv_pif_10_4h_radar.png', url: 'https://www.tradingview.com/chart/Ic1rsDd8/' },
+    { filename: '07_tv_pif_10_4h_radar.png', url: 'https://www.tradingview.com/chart/Ic1rsDd8/', delay: 5000 },
     { filename: '07_tv_pif_11_1d_warm_buy.png', url: 'https://www.tradingview.com/chart/gOfQP0dQ/' },
     { filename: '07_tv_pif_12_1d_dno_atr.png', url: 'https://www.tradingview.com/chart/eGg1nHFa/' },
     { filename: '07_tv_pif_13_1d_warn.png', url: 'https://www.tradingview.com/chart/H2iw7QuE/' },
@@ -41,6 +42,7 @@ const CHARTS_CONFIG = [
     { filename: '07_tv_pif_25_1d_btc_mood.png', url: 'https://www.tradingview.com/chart/qgXsz9Bs/' }
 ];
 
+const DEFAULT_DELAY = 3000;
 const delay = ms => new Promise(r => setTimeout(r, ms));
 
 (async () => {
@@ -61,7 +63,10 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
         try {
             console.log(`\n[${++count}/${CHARTS_CONFIG.length}] Открываем: ${chart.filename}`);
             await page.goto(chart.url, { waitUntil: 'networkidle2', timeout: 60000 });
-            await delay(3000); // было 5000, потом 2500 - мало для тяжёлых графиков
+            
+            // Используем индивидуальный таймаут или дефолтный
+            const waitTime = chart.delay || DEFAULT_DELAY;
+            await delay(waitTime);
             
             const element = await page.$('.layout__area--center');
             if (element) {
