@@ -7,6 +7,9 @@ cd "$(dirname "$0")" || exit
 # Файл режима
 MODE_FILE="./mode.txt"
 
+# Lock файл (защита от двойного запуска)
+LOCK_FILE="./cycle.lock"
+
 # Webhook URL (продакшен)
 WEBHOOK_URL="https://gork8.ru/webhook/cr-start"
 
@@ -17,6 +20,24 @@ LOG_FILE="./cron.log"
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
 }
+
+# === ПРОВЕРКА LOCK ===
+if [ -f "$LOCK_FILE" ]; then
+    LOCK_PID=$(cat "$LOCK_FILE")
+    if ps -p "$LOCK_PID" > /dev/null 2>&1; then
+        log "⚠️ Цикл уже запущен (PID $LOCK_PID), пропускаем"
+        exit 0
+    else
+        log "🧹 Удаляем старый lock (процесс $LOCK_PID не существует)"
+        rm -f "$LOCK_FILE"
+    fi
+fi
+
+# Создаём lock
+echo $$ > "$LOCK_FILE"
+
+# Удаляем lock при выходе
+trap "rm -f $LOCK_FILE" EXIT
 
 # Читаем режим (по умолчанию auto)
 MODE=$(cat "$MODE_FILE" 2>/dev/null || echo "auto")
@@ -30,10 +51,6 @@ log "Режим: $MODE"
 case "$MODE" in
     "auto")
         log "✅ Режим AUTO - запускаем полный цикл"
-        ;;
-    "pause")
-        log "⏸️ Режим PAUSE - пропускаем цикл"
-        exit 0
         ;;
     "stop")
         log "🛑 Режим STOP - выходим"

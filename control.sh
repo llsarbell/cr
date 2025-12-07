@@ -3,7 +3,6 @@
 # 
 # Режимы:
 #   ./control.sh auto    - включить автоматику
-#   ./control.sh pause   - поставить на паузу
 #   ./control.sh stop    - остановить полностью
 #   ./control.sh status  - показать текущий режим и интервал
 #   ./control.sh run     - запустить вручную (игнорирует режим)
@@ -74,10 +73,6 @@ case "$1" in
         echo "auto" > "$MODE_FILE"
         echo "✅ Режим: AUTO (автоматика включена)"
         ;;
-    "pause")
-        echo "pause" > "$MODE_FILE"
-        echo "⏸️ Режим: PAUSE (временная пауза)"
-        ;;
     "stop")
         echo "stop" > "$MODE_FILE"
         echo "🛑 Режим: STOP (автоматика выключена)"
@@ -100,6 +95,19 @@ case "$1" in
         fi
         ;;
     "run")
+        LOCK_FILE="./cycle.lock"
+        if [ -f "$LOCK_FILE" ]; then
+            LOCK_PID=$(cat "$LOCK_FILE")
+            if ps -p "$LOCK_PID" > /dev/null 2>&1; then
+                echo "⚠️ Цикл уже запущен (PID $LOCK_PID). Подожди завершения."
+                exit 1
+            else
+                rm -f "$LOCK_FILE"
+            fi
+        fi
+        echo $$ > "$LOCK_FILE"
+        trap "rm -f $LOCK_FILE" EXIT
+        
         echo "🚀 Ручной запуск (игнорируем режим)..."
         ./run_ALL_cycle.sh
         echo "🌐 Вызываем webhook..."
@@ -112,7 +120,6 @@ case "$1" in
         echo ""
         echo "Режимы:"
         echo "  ./control.sh auto     - включить автоматику"
-        echo "  ./control.sh pause    - поставить на паузу"
         echo "  ./control.sh stop     - остановить"
         echo "  ./control.sh status   - показать режим и интервал"
         echo "  ./control.sh run      - запустить вручную"
