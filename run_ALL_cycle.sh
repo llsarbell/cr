@@ -1,4 +1,6 @@
 #!/bin/bash
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/bin:$PATH"
 
 echo "================================================"
 echo "🚀 ЗАПУСК ПОЛНОГО ЦИКЛА (CF + TV + PIF)"
