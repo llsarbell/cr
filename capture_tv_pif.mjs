@@ -61,7 +61,7 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
         try {
             console.log(`\n[${++count}/${CHARTS_CONFIG.length}] Открываем: ${chart.filename}`);
             await page.goto(chart.url, { waitUntil: 'networkidle2', timeout: 60000 });
-            await delay(5000); 
+            await delay(2500); // было 5000
             
             const element = await page.$('.layout__area--center');
             if (element) {

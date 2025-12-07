@@ -66,8 +66,8 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
             
             await page.goto(chart.url, { waitUntil: 'networkidle2', timeout: 60000 });
             
-            // Ждем прогрузки индикаторов (TV иногда тупит)
-            await delay(5000); 
+            // Ждем прогрузки индикаторов (уменьшено с 5000 до 2500)
+            await delay(2500); 
 
             // Удаляем всплывающие плашки, если есть, и пытаемся найти график
             // Обычно график лежит в .layout__area--center
