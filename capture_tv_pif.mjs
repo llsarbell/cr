@@ -20,7 +20,7 @@ const CHARTS_CONFIG = [
     { filename: '07_tv_pif_03_1d_big_guy.png', url: 'https://www.tradingview.com/chart/7iMfXXlW/' },
     { filename: '07_tv_pif_04_1d_hist_r_s_m.png', url: 'https://www.tradingview.com/chart/z9k0uaIB/' },
     { filename: '07_tv_pif_05_1d_trader_01.png', url: 'https://www.tradingview.com/chart/38d1vWEf/' },
-    { filename: '07_tv_pif_06_1d_global_mini.png', url: 'https://www.tradingview.com/chart/SYRy7RY0/' },
+    { filename: '07_tv_pif_06_1d_global_mini.png', url: 'https://www.tradingview.com/chart/SYRy7RY0/', delay: 5000 },
     { filename: '07_tv_pif_07_1d_inside.png', url: 'https://www.tradingview.com/chart/61THKnE7/' },
     { filename: '07_tv_pif_08_1d_bottom_line.png', url: 'https://www.tradingview.com/chart/qoNAuueL/' },
     { filename: '07_tv_pif_09_1d_safety_trade.png', url: 'https://www.tradingview.com/chart/9pQ7IPF9/' },
