@@ -11,7 +11,7 @@ git stash pop 2>/dev/null
 
 # 1. УДАЛЕНИЕ
 echo "🗑️ Удаление старых TV PIF с сервера..."
-rm -f screenshots/07_tv_pif_*.png
+rm -f screenshots/tv_pif_*.png
 git add -u screenshots/
 if ! git diff --cached --quiet; then
     git commit -m "Delete TV PIF charts before update"
@@ -31,10 +31,10 @@ fi
 
 # 3. ЗАЛИВКА
 echo "📤 (TV PIF) Заливка..."
-git add screenshots/07_tv_pif_*.png
+git add screenshots/tv_pif_*.png
 
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-git commit -m "07_tv_pif_upd - $TIMESTAMP"
+git commit -m "tv_pif_upd - $TIMESTAMP"
 git push origin main
 
 echo "✅ TV PIF обновлены"

@@ -11,7 +11,7 @@ git stash pop 2>/dev/null
 
 # 1. УДАЛЕНИЕ
 echo "🗑️ Удаление старых TV CF с сервера..."
-rm -f screenshots/06_tv_cf_*.png
+rm -f screenshots/tv_cf_*.png
 git add -u screenshots/
 if ! git diff --cached --quiet; then
     git commit -m "Delete TV CF charts before update"
@@ -29,10 +29,10 @@ fi
 
 # 3. ЗАЛИВКА
 echo "📤 (TV CF) Заливка..."
-git add screenshots/06_tv_cf_*.png
+git add screenshots/tv_cf_*.png
 
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-git commit -m "06_tv_cf_upd - $TIMESTAMP"
+git commit -m "tv_cf_upd - $TIMESTAMP"
 git push origin main
 
 echo "✅ TV CF обновлены"
