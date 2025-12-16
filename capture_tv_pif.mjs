@@ -6,7 +6,7 @@ import { mkdirSync } from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Папки (используем тот же профиль и ту же папку вывода)
+// Папки
 const USER_DATA_DIR = join(__dirname, 'chrome-profile');
 const OUTPUT_DIR = join(__dirname, 'screenshots');
 
@@ -64,7 +64,6 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
             console.log(`\n[${++count}/${CHARTS_CONFIG.length}] Открываем: ${chart.filename}`);
             await page.goto(chart.url, { waitUntil: 'networkidle2', timeout: 60000 });
             
-            // Используем индивидуальный таймаут или дефолтный
             const waitTime = chart.delay || DEFAULT_DELAY;
             await delay(waitTime);
             

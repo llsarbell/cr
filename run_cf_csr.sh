@@ -1,42 +1,28 @@
 #!/bin/bash
 export PATH="/opt/homebrew/bin:$PATH"
-export PATH="/opt/homebrew/bin:$PATH"
 
 cd "$(dirname "$0")" || exit
 
 echo "🔄 (CF) Синхронизация..."
 git stash
-git pull --rebase origin main
+git fetch origin && git pull origin main --no-rebase || git stash pop
 git stash pop 2>/dev/null
 
-# 1. УДАЛЯЕМ ФАЙЛЫ С СЕРВЕРА (чтобы очистить место под новые)
 echo "🗑️ Удаление старых версий с сервера..."
-# Удаляем локально
-rm -f screenshots/cf_*.png
-# Говорим гиту, что они удалены
-git add -u screenshots/
-# Если есть что удалять - коммитим и пушим
-if ! git diff --cached --quiet; then
-    git commit -m "Delete CF charts before update"
-    git push origin main
-    echo "   -> Файлы удалены с сервера."
-fi
+git rm -f screenshots/cf_*.png 2>/dev/null
+git commit -m "Delete CF charts before update" 2>/dev/null
+git push origin main 2>/dev/null
+echo "   -> Файлы удалены с сервера."
 
-# 2. ГЕНЕРИРУЕМ НОВЫЕ
 echo "📸 (CF) Генерация новых..."
 node capture_cf.mjs
-
 if [ $? -ne 0 ]; then
     echo "❌ Ошибка в JS скрипте"
     exit 1
 fi
 
-# 3. ЗАЛИВАЕМ НОВЫЕ
-echo "📤 (CF) Заливка свежих файлов..."
 git add screenshots/cf_*.png
-
-TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-git commit -m "05_scr_upd - $TIMESTAMP"
+git commit -m "Update CF charts"
 git push origin main
 
-echo "✅ CF-скриншоты обновлены"
+echo "✅ CF обновлены"

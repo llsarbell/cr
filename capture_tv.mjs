@@ -55,7 +55,6 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
     });
 
     const page = await browser.newPage();
-    // Ставим масштаб х2 для четкости (retina) и квадратный размер
     await page.setViewport({ width: 1200, height: 1200, deviceScaleFactor: 2 });
 
     let count = 0;
@@ -69,15 +68,12 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
             // Ждем прогрузки индикаторов
             await delay(2500); 
 
-            // Удаляем всплывающие плашки, если есть, и пытаемся найти график
-            // Обычно график лежит в .layout__area--center
             const element = await page.$('.layout__area--center');
 
             if (element) {
                 await element.screenshot({ path: join(OUTPUT_DIR, chart.filename) });
                 console.log(`   ✓ Сохранено`);
             } else {
-                // Если не нашли центр, снимаем весь экран
                 await page.screenshot({ path: join(OUTPUT_DIR, chart.filename) });
                 console.log(`   ⚠️ Сохранено (Full Page) - селектор не найден`);
             }
