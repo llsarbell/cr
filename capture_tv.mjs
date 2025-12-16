@@ -55,7 +55,7 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
     });
 
     const page = await browser.newPage();
-    // Ставим масштаб х2 для четкости (retina) и размер 1200
+    // Ставим масштаб х2 для четкости (retina) и квадратный размер
     await page.setViewport({ width: 1200, height: 1200, deviceScaleFactor: 2 });
 
     let count = 0;
