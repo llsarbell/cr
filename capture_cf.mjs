@@ -31,39 +31,39 @@ const CHARTS_CONFIG = [
   { name: 'BTC OI / 24h Volume', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(14) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'oi_vol' }
 ];
 
-// Карта имён файлов (новая нумерация 01-20)
+// Карта имён файлов (новый нейминг: cf_*)
 const FILE_NAME_MAP = {
-  magma_4h: '05_cf_01_4h_magma.png',
-  magma_1d: '05_cf_02_1d_magma.png',
-  magma_1w: '05_cf_03_1w_magma.png',
+  magma_4h: 'cf_01_4h_magma.png',
+  magma_1d: 'cf_02_1d_magma.png',
+  magma_1w: 'cf_03_1w_magma.png',
 
-  bb_4h: '05_cf_04_4h_bb.png',
-  bb_1d: '05_cf_05_1d_bb.png',
+  bb_4h: 'cf_04_4h_bb.png',
+  bb_1d: 'cf_05_1d_bb.png',
 
-  lsratio_1d: '05_cf_06_1d_dex_long_short.png',
+  lsratio_1d: 'cf_06_1d_dex_long_short.png',
 
-  lscex_1d: '05_cf_07_1d_cex_long_short.png',
+  lscex_1d: 'cf_07_1d_cex_long_short.png',
 
-  fgi_3m: '05_cf_08_3m_fear_greed.png',
+  fgi_3m: 'cf_08_3m_fear_greed.png',
 
-  fgi_alt_1m: '05_cf_09_1m_fear_greed_alt.png',
+  fgi_alt_1m: 'cf_09_1m_fear_greed_alt.png',
 
-  vix_1d: '05_cf_10_1d_vix_rsi.png',
+  vix_1d: 'cf_10_1d_vix_rsi.png',
 
-  trendrsi_alt_low:  '05_cf_11_1d_low_alts_trend.png',
-  trendrsi_alt_mid:  '05_cf_12_1d_mid_alts_trend.png',
-  trendrsi_alt_high: '05_cf_13_1d_high_alts_trend.png',
+  trendrsi_alt_low:  'cf_11_1d_low_alts_trend.png',
+  trendrsi_alt_mid:  'cf_12_1d_mid_alts_trend.png',
+  trendrsi_alt_high: 'cf_13_1d_high_alts_trend.png',
 
-  trendrsi_btc_1d: '05_cf_14_1d_btc_trend_rsi.png',
+  trendrsi_btc_1d: 'cf_14_1d_btc_trend_rsi.png',
 
-  fr_oi_1d: '05_cf_15_1d_fr_x_oi.png',
-  fr_oi_1w: '05_cf_16_1w_fr_x_oi.png',
+  fr_oi_1d: 'cf_15_1d_fr_x_oi.png',
+  fr_oi_1w: 'cf_16_1w_fr_x_oi.png',
 
-  funding_1d: '05_cf_17_1d_funding.png',
-  funding_1w: '05_cf_18_1w_funding.png',
+  funding_1d: 'cf_17_1d_funding.png',
+  funding_1w: 'cf_18_1w_funding.png',
 
-  liq_1d: '05_cf_19_1d_liq_imbalance.png',
-  oi_vol_1d: '05_cf_20_1d_oi_volume.png'
+  liq_1d: 'cf_19_1d_liq_imbalance.png',
+  oi_vol_1d: 'cf_20_1d_oi_volume.png'
 };
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -99,7 +99,7 @@ async function captureCharts() {
 
   console.log('Открываем главную страницу...');
   await page.goto(BASE_URL, { waitUntil: 'networkidle2', timeout: 60000 });
-  await delay(2500); // было 5000
+  await delay(2500);
 
   let totalScreenshots = 0;
 
@@ -110,7 +110,7 @@ async function captureCharts() {
       const canvas = await page.$(config.canvasSelector);
       if (canvas) {
         await canvas.evaluate(el => el.scrollIntoView({ behavior: 'smooth', block: 'center' }));
-        await delay(500); // было 1000
+        await delay(500);
       }
     } catch {}
 
@@ -130,8 +130,8 @@ async function captureCharts() {
           const selectElement = await panel.$('#rangeTypeSelect');
           if (selectElement) {
             await selectElement.select(riskType);
-            await page.waitForNetworkIdle({ idleTime: 250 }).catch(() => delay(1000)); // было 500/2000
-            await delay(1000); // было 2000
+            await page.waitForNetworkIdle({ idleTime: 250 }).catch(() => delay(1000));
+            await delay(1000);
           }
 
           const canvas = await page.$(config.canvasSelector);
@@ -162,8 +162,8 @@ async function captureCharts() {
         const selectElement = await panel.$('#exchangeSelect');
         if (selectElement) {
           await selectElement.select(config.exchangeValue);
-          await page.waitForNetworkIdle({ idleTime: 250 }).catch(() => delay(1000)); // было 500/2000
-          await delay(1000); // было 2000
+          await page.waitForNetworkIdle({ idleTime: 250 }).catch(() => delay(1000));
+          await delay(1000);
         } else {
           console.warn(' ⚠️ Селект биржи не найден');
         }
@@ -188,8 +188,8 @@ async function captureCharts() {
         }
 
         await tfButton.click();
-        await page.waitForNetworkIdle({ idleTime: 250 }).catch(() => delay(1000)); // было 500/2000
-        await delay(1000); // было 2000
+        await page.waitForNetworkIdle({ idleTime: 250 }).catch(() => delay(1000));
+        await delay(1000);
 
         const canvas = await page.$(config.canvasSelector);
         if (!canvas) {
