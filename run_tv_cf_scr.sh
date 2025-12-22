@@ -24,4 +24,4 @@ git add screenshots/tv_cf_*.png
 git commit -m "Update TV CF charts"
 git push origin main
 
-echo "✅ TV CF обновлены"
+echo "✅ TV CF обновлены (20 шт)"

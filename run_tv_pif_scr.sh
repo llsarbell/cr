@@ -24,4 +24,4 @@ git add screenshots/tv_pif_*.png
 git commit -m "Update TV PIF charts"
 git push origin main
 
-echo "✅ TV PIF обновлены"
+echo "✅ TV PIF обновлены (25 шт)"

@@ -13,28 +13,28 @@ const OUTPUT_DIR = join(__dirname, 'screenshots');
 // Создаем папку если нет
 try { mkdirSync(OUTPUT_DIR, { recursive: true }); } catch (err) {}
 
-// === СПИСОК ГРАФИКОВ (новый нейминг: tv_cf_*) ===
+// === СПИСОК ГРАФИКОВ (новая нумерация: 20 индикаторов) ===
 const CHARTS_CONFIG = [
-    { filename: 'tv_cf_01_1d_trend_rsi.png', url: 'https://www.tradingview.com/chart/Q1AQBZrq/' },
-    { filename: 'tv_cf_02_1d_div_all.png', url: 'https://www.tradingview.com/chart/DeeS34sy/' },
-    { filename: 'tv_cf_03_1d_vix_bb.png', url: 'https://www.tradingview.com/chart/FKGbmWE4/' },
-    { filename: 'tv_cf_04_1d_vix_atr.png', url: 'https://www.tradingview.com/chart/3xV75vBD/' },
-    { filename: 'tv_cf_05_1d_vix_rsi.png', url: 'https://www.tradingview.com/chart/ytxm5gs9/' },
-    { filename: 'tv_cf_06_1d_stoch_rsi.png', url: 'https://www.tradingview.com/chart/cG9MGbO9/' },
-    { filename: 'tv_cf_07_1d_rsi_alma.png', url: 'https://www.tradingview.com/chart/KMnL6TUq/' },
-    { filename: 'tv_cf_08_1d_deviation.png', url: 'https://www.tradingview.com/chart/PUHCVJ0v/' },
-    { filename: 'tv_cf_09_1d_pd200.png', url: 'https://www.tradingview.com/chart/jfA8pIDD/' },
-    { filename: 'tv_cf_10_1d_devo.png', url: 'https://www.tradingview.com/chart/ZfqQJxQa/' },
-    { filename: 'tv_cf_11_1d_bol_top_bot.png', url: 'https://www.tradingview.com/chart/g0hiXx49/' },
-    { filename: 'tv_cf_12_1d_bb_trend_ma.png', url: 'https://www.tradingview.com/chart/k6SvW2my/' },
-    { filename: 'tv_cf_13_1d_atr_top_bot.png', url: 'https://www.tradingview.com/chart/PBZOOFl1/' },
-    { filename: 'tv_cf_14_1d_atr_peak.png', url: 'https://www.tradingview.com/chart/ag7V09GT/' },
-    { filename: 'tv_cf_15_1d_angle_7.png', url: 'https://www.tradingview.com/chart/bMXvYCVF/' },
-    { filename: 'tv_cf_16_1d_alma_lvl.png', url: 'https://www.tradingview.com/chart/XV0L73xp/' },
-    { filename: 'tv_cf_17_1d_ago.png', url: 'https://www.tradingview.com/chart/jsmvbxBi/' },
-    { filename: 'tv_cf_18_1d_adiv.png', url: 'https://www.tradingview.com/chart/nXNIFZcY/' },
-    { filename: 'tv_cf_19_1d_5ma_heatmap.png', url: 'https://www.tradingview.com/chart/l5FfuBfr/' },
-    { filename: 'tv_cf_20_1d_fear_greed.png', url: 'https://www.tradingview.com/chart/0X2q2DVL/' }
+    { filename: 'tv_cf_01_1d_div_all.png', url: 'https://www.tradingview.com/chart/DeeS34sy/' },
+    { filename: 'tv_cf_02_1d_vix_atr.png', url: 'https://www.tradingview.com/chart/3xV75vBD/' },
+    { filename: 'tv_cf_03_1d_stoch_rsi.png', url: 'https://www.tradingview.com/chart/cG9MGbO9/' },
+    { filename: 'tv_cf_04_1d_rsi_alma.png', url: 'https://www.tradingview.com/chart/KMnL6TUq/' },
+    { filename: 'tv_cf_05_1d_deviation.png', url: 'https://www.tradingview.com/chart/PUHCVJ0v/' },
+    { filename: 'tv_cf_06_1d_pd200.png', url: 'https://www.tradingview.com/chart/jfA8pIDD/' },
+    { filename: 'tv_cf_07_1d_devo.png', url: 'https://www.tradingview.com/chart/ZfqQJxQa/' },
+    { filename: 'tv_cf_08_1d_bol_top_bot.png', url: 'https://www.tradingview.com/chart/g0hiXx49/' },
+    { filename: 'tv_cf_09_1d_bb_trend_ma.png', url: 'https://www.tradingview.com/chart/k6SvW2my/' },
+    { filename: 'tv_cf_10_1d_atr_top_bot.png', url: 'https://www.tradingview.com/chart/PBZOOFl1/' },
+    { filename: 'tv_cf_11_1d_atr_peak.png', url: 'https://www.tradingview.com/chart/ag7V09GT/' },
+    { filename: 'tv_cf_12_1d_angle_7.png', url: 'https://www.tradingview.com/chart/bMXvYCVF/' },
+    { filename: 'tv_cf_13_1d_alma_lvl.png', url: 'https://www.tradingview.com/chart/XV0L73xp/' },
+    { filename: 'tv_cf_14_1d_ago.png', url: 'https://www.tradingview.com/chart/jsmvbxBi/' },
+    { filename: 'tv_cf_15_1d_adiv.png', url: 'https://www.tradingview.com/chart/nXNIFZcY/' },
+    { filename: 'tv_cf_16_1d_5ma_heatmap.png', url: 'https://www.tradingview.com/chart/l5FfuBfr/' },
+    { filename: 'tv_cf_17_4h_cks.png', url: 'https://www.tradingview.com/chart/iCJ7fUim/' },
+    { filename: 'tv_cf_18_1d_cks.png', url: 'https://www.tradingview.com/chart/SStP4lEW/' },
+    { filename: 'tv_cf_19_4h_atr_devo.png', url: 'https://www.tradingview.com/chart/bQdGAnPR/' },
+    { filename: 'tv_cf_20_1d_atr_devo.png', url: 'https://www.tradingview.com/chart/LwoclkhN/' }
 ];
 
 const delay = ms => new Promise(r => setTimeout(r, ms));

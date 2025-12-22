@@ -14,23 +14,22 @@ try {
   mkdirSync(OUTPUT_DIR, { recursive: true });
 } catch (err) {}
 
-// --- СПИСОК ГРАФИКОВ ---
+// --- СПИСОК ГРАФИКОВ (16 индикаторов) ---
 const CHARTS_CONFIG = [
   { name: 'BTC Magma Signals', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(2) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['4h', '1d', '1w'], prefix: 'magma' },
   { name: 'BTC BB Signals', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(3) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['4h', '1d'], prefix: 'bb' },
   { name: 'BTC Long-Short Ratio', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(4) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'lsratio' },
   { name: 'BTC Long-Short CEX', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(5) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'lscex' },
-  { name: 'Fear & Greed Indicator', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(6) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['3m'], prefix: 'fgi' },
   { name: 'Fear & Greed Indicator Alternative API', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(7) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1m'], prefix: 'fgi_alt' },
   { name: 'VIX RSI Volatility', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(8) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'vix' },
   { name: 'Trend RSI Bitcoin', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(10) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'trendrsi_btc' },
-  { name: 'Funding Rate', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(11) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d', '1w'], prefix: 'funding' },
   { name: 'FR x OI', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(12) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d', '1w'], prefix: 'fr_oi' },
+  { name: 'Funding Rate', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(11) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d', '1w'], prefix: 'funding' },
   { name: 'Liquidation Imbalance', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(13) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'liq', hasExchangeSelector: true, exchangeValue: 'bybit' },
   { name: 'BTC OI / 24h Volume', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(14) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'oi_vol' }
 ];
 
-// Карта имён файлов (новый нейминг: cf_*, 17 индикаторов)
+// Карта имён файлов (новая нумерация: 16 индикаторов)
 const FILE_NAME_MAP = {
   magma_4h: 'cf_01_4h_magma.png',
   magma_1d: 'cf_02_1d_magma.png',
@@ -43,22 +42,20 @@ const FILE_NAME_MAP = {
 
   lscex_1d: 'cf_07_1d_cex_long_short.png',
 
-  fgi_3m: 'cf_08_3m_fear_greed.png',
+  fgi_alt_1m: 'cf_08_1m_fear_greed_alt.png',
 
-  fgi_alt_1m: 'cf_09_1m_fear_greed_alt.png',
+  vix_1d: 'cf_09_1d_vix_rsi.png',
 
-  vix_1d: 'cf_10_1d_vix_rsi.png',
+  trendrsi_btc_1d: 'cf_10_1d_btc_trend_rsi.png',
 
-  trendrsi_btc_1d: 'cf_11_1d_btc_trend_rsi.png',
+  fr_oi_1d: 'cf_11_1d_fr_x_oi.png',
+  fr_oi_1w: 'cf_12_1w_fr_x_oi.png',
 
-  fr_oi_1d: 'cf_12_1d_fr_x_oi.png',
-  fr_oi_1w: 'cf_13_1w_fr_x_oi.png',
+  funding_1d: 'cf_13_1d_funding.png',
+  funding_1w: 'cf_14_1w_funding.png',
 
-  funding_1d: 'cf_14_1d_funding.png',
-  funding_1w: 'cf_15_1w_funding.png',
-
-  liq_1d: 'cf_16_1d_liq_imbalance.png',
-  oi_vol_1d: 'cf_17_1d_oi_volume.png'
+  liq_1d: 'cf_15_1d_liq_imbalance.png',
+  oi_vol_1d: 'cf_16_1d_oi_volume.png'
 };
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));

@@ -12,7 +12,7 @@ const OUTPUT_DIR = join(__dirname, 'screenshots');
 
 try { mkdirSync(OUTPUT_DIR, { recursive: true }); } catch (err) {}
 
-// === СТРАТЕГИЯ PIF (новый нейминг: tv_pif_*) ===
+// === СТРАТЕГИЯ PIF (25 индикаторов) ===
 // delay: индивидуальный таймаут для тяжёлых графиков (по умолчанию 3000)
 const CHARTS_CONFIG = [
     { filename: 'tv_pif_01_1d_div.png', url: 'https://www.tradingview.com/chart/IVWjCSts/' },
