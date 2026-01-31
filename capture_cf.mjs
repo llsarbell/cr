@@ -14,7 +14,7 @@ try {
   mkdirSync(OUTPUT_DIR, { recursive: true });
 } catch (err) {}
 
-// --- СПИСОК ГРАФИКОВ (16 индикаторов) ---
+// --- СПИСОК ГРАФИКОВ (19 индикаторов) ---
 const CHARTS_CONFIG = [
   { name: 'BTC Magma Signals', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(2) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['4h', '1d', '1w'], prefix: 'magma' },
   { name: 'BTC BB Signals', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(3) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['4h', '1d'], prefix: 'bb' },
@@ -26,10 +26,14 @@ const CHARTS_CONFIG = [
   { name: 'FR x OI', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(12) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d', '1w'], prefix: 'fr_oi' },
   { name: 'Funding Rate', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(11) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d', '1w'], prefix: 'funding' },
   { name: 'Liquidation Imbalance', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(13) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'liq', hasExchangeSelector: true, exchangeValue: 'bybit' },
-  { name: 'BTC OI / 24h Volume', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(14) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'oi_vol' }
+  { name: 'BTC OI / 24h Volume', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(17) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'oi_vol' },
+  // НОВЫЕ ИНДИКАТОРЫ
+  { name: 'Exchange BTC Liquidity Ratio', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(14) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'liq_ratio' },
+  { name: 'BTC Dominance', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(15) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'btc_dom' },
+  { name: 'Market Overheat Index', canvasSelector: '#app > div > div.content-wrapper > div > section > div > div > div:nth-child(2) > div > div > div > div:nth-child(16) > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > canvas.am5-layer-30', timeframes: ['1d'], prefix: 'overheat' }
 ];
 
-// Карта имён файлов (новая нумерация: 16 индикаторов)
+// Карта имён файлов (19 индикаторов)
 const FILE_NAME_MAP = {
   magma_4h: 'cf_01_4h_magma.png',
   magma_1d: 'cf_02_1d_magma.png',
@@ -55,7 +59,13 @@ const FILE_NAME_MAP = {
   funding_1w: 'cf_14_1w_funding.png',
 
   liq_1d: 'cf_15_1d_liq_imbalance.png',
-  oi_vol_1d: 'cf_16_1d_oi_volume.png'
+  
+  oi_vol_1d: 'cf_16_1d_oi_volume.png',
+
+  // НОВЫЕ
+  liq_ratio_1d: 'cf_17_1d_liquidity_ratio.png',
+  btc_dom_1d: 'cf_18_1d_btc_dominance.png',
+  overheat_1d: 'cf_19_1d_overheat.png'
 };
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
