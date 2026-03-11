@@ -11,7 +11,7 @@ MODE_FILE="./mode.txt"
 LOCK_FILE="./cycle.lock"
 
 # Webhook URL (продакшен)
-WEBHOOK_URL="https://gork8.ru/webhook/cr-start"
+WEBHOOK_URL="http://localhost:5678/webhook/cr-start"
 
 # Лог файл
 LOG_FILE="./cron.log"
@@ -64,7 +64,7 @@ esac
 # === ЭТАП 1: СКРИНШОТЫ ===
 log "📸 Этап 1: Запуск скриншотов..."
 
-./run_ALL_cycle.sh >> "$LOG_FILE" 2>&1
+./run_capture.sh >> "$LOG_FILE" 2>&1
 
 if [ $? -ne 0 ]; then
     log "❌ Ошибка при создании скриншотов"

@@ -25,4 +25,4 @@ git add screenshots/cf_*.png
 git commit -m "Update CF charts"
 git push origin main
 
-echo "✅ CF обновлены (19 шт)"
+echo "✅ CF обновлены (6 шт)"
